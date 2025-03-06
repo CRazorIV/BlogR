@@ -12,7 +12,7 @@ define('DB_PASS', 'tschoppedhuzz');
 
 // Application Configuration
 define('SITE_NAME', 'Programming Community');
-define('SITE_URL', 'http://localhost'); // Change this to your domain in production
+define('SITE_URL', 'http://101356.sd-lab.nl/projecten/blogr'); // Change this to your domain in production
 define('MAX_POST_LENGTH', 1000);
 define('MAX_UPLOAD_SIZE', 5242880); // 5MB in bytes
 define('ALLOWED_IMAGE_TYPES', ['image/jpeg', 'image/png', 'image/gif']);
