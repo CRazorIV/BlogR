@@ -1,35 +1,60 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { lazy, Suspense } from 'react';
+
+// Layout components
+import Header from './components/layout/Header';
+import Footer from './components/layout/Footer';
+
+// Pages
+const HomePage = lazy(() => import('./pages/HomePage'));
+const LoginPage = lazy(() => import('./pages/LoginPage'));
+const RegisterPage = lazy(() => import('./pages/RegisterPage'));
+const ProfilePage = lazy(() => import('./pages/ProfilePage'));
+const PostDetailPage = lazy(() => import('./pages/PostDetailPage'));
+const MessagePage = lazy(() => import('./pages/MessagePage'));
+const NotFoundPage = lazy(() => import('./pages/NotFoundPage'));
+
+// Loading component
+const LoadingFallback = () => <div className="loading">Loading...</div>;
 
 function App() {
-  const [count, setCount] = useState(0)
+  // We'll replace this with actual auth state from context later
+  const isAuthenticated = false;
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <Router>
+      <div className="app-container">
+        <Header />
+        <main className="main-content">
+          <Suspense fallback={<LoadingFallback />}>
+            <Routes>
+              {/* Public routes */}
+              <Route path="/" element={<HomePage />} />
+              <Route path="/login" element={
+                isAuthenticated ? <Navigate to="/" /> : <LoginPage />
+              } />
+              <Route path="/register" element={
+                isAuthenticated ? <Navigate to="/" /> : <RegisterPage />
+              } />
+              <Route path="/post/:id" element={<PostDetailPage />} />
+
+              {/* Protected routes */}
+              <Route path="/profile/:username" element={
+                isAuthenticated ? <ProfilePage /> : <Navigate to="/login" />
+              } />
+              <Route path="/messages" element={
+                isAuthenticated ? <MessagePage /> : <Navigate to="/login" />
+              } />
+
+              {/* 404 route */}
+              <Route path="*" element={<NotFoundPage />} />
+            </Routes>
+          </Suspense>
+        </main>
+        <Footer />
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    </Router>
+  );
 }
 
-export default App
+export default App;
