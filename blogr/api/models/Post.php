@@ -113,4 +113,57 @@ class Post
         }
         return false;
     }
+
+    // Delete post
+    public function delete()
+    {
+        // First delete related records
+        $this->deleteRelatedRecords();
+
+        // Then delete the post
+        $query = "DELETE FROM " . $this->table_name . " WHERE id = :id";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(":id", $this->id);
+
+        if ($stmt->execute()) {
+            return true;
+        }
+        return false;
+    }
+
+    // Delete related records (likes, comments, categories)
+    private function deleteRelatedRecords()
+    {
+        // Delete likes
+        $query = "DELETE FROM likes WHERE post_id = :post_id";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(":post_id", $this->id);
+        $stmt->execute();
+
+        // Delete comments
+        $query = "DELETE FROM comments WHERE post_id = :post_id";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(":post_id", $this->id);
+        $stmt->execute();
+
+        // Delete category relationships
+        $query = "DELETE FROM post_categories WHERE post_id = :post_id";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(":post_id", $this->id);
+        $stmt->execute();
+    }
+
+    // Check if user owns post
+    public function isOwnedBy($user_id)
+    {
+        $query = "SELECT id FROM " . $this->table_name . " 
+                WHERE id = :post_id AND author_id = :user_id";
+
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(":post_id", $this->id);
+        $stmt->bindParam(":user_id", $user_id);
+        $stmt->execute();
+
+        return $stmt->rowCount() > 0;
+    }
 }

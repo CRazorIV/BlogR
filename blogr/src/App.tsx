@@ -1,5 +1,7 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { lazy, Suspense } from 'react';
+import CreatePost from './components/CreatePost';
+import BlogPost from './components/BlogPost';
 
 // Layout components
 import Header from './components/layout/Header';
@@ -48,6 +50,9 @@ function App() {
 
               {/* 404 route */}
               <Route path="*" element={<NotFoundPage />} />
+
+              {/* New routes */}
+              <Route path="/create" element={<CreatePost />} />
             </Routes>
           </Suspense>
         </main>

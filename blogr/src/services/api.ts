@@ -55,5 +55,33 @@ export const api = {
             console.error('Error creating post:', error);
             throw error;
         }
+    },
+
+    async deletePost(postId: number): Promise<void> {
+        const userData = localStorage.getItem('user');
+        if (!userData) {
+            throw new Error('User not authenticated');
+        }
+        const user = JSON.parse(userData);
+
+        try {
+            const response = await fetch(`${API_BASE_URL}/posts/delete.php`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    post_id: postId,
+                    user_id: user.id
+                }),
+            });
+            if (!response.ok) {
+                const data = await response.json();
+                throw new Error(data.message || 'Failed to delete post');
+            }
+        } catch (error) {
+            console.error('Error deleting post:', error);
+            throw error;
+        }
     }
 };
